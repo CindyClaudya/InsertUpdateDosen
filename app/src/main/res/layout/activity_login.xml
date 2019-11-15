@@ -76,6 +76,16 @@
                 android:textColor="#fff"
                 android:textSize="18sp" />
 
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#d67601"
+                android:text="Logout"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:textSize="18sp" />
+
 
         </LinearLayout>
     </RelativeLayout>
@@ -84,11 +94,11 @@
         android:id="@+id/login_title"
         android:layout_width="411dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="224dp"
+        android:layout_marginTop="300dp"
         android:gravity="center_horizontal"
         android:text="SI-KRS "
         android:textColor="#fff"
-        android:textSize="26sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
