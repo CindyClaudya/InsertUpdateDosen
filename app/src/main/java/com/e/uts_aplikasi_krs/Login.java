@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.UserManager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,9 +25,6 @@ public class Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-        mViewUser = findViewById(R.id.et_emailLogin);
-        mViewPassword = findViewById(R.id.et_passwordSignin);
 
         mViewPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -59,7 +57,7 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (Preferences.getLoggedInStatus(getBaseContext())) {
+        {
             startActivity(new Intent(getBaseContext(), MainActivity.class));
             finish();
         }
@@ -104,22 +102,18 @@ public class Login extends AppCompatActivity {
         else masuk();
     }
 
-
-    private void masuk() {
-        Preferences.setLoggedInUser(getBaseContext(), Preferences.getRegisteredUser(getBaseContext()));
-        Preferences.setLoggedInStatus(getBaseContext(), true);
-        startActivity(new Intent(getBaseContext(), MainActivity.class));
-        finish();
-    }
-
-
     private boolean cekPassword(String password) {
-        return password.equals(Preferences.getRegisteredPass(getBaseContext()));
+        return cekPassword(password);
     }
-
 
     private boolean cekUser(String user) {
-        return user.equals(Preferences.getRegisteredUser(getBaseContext()));
+        return cekUser(user);
     }
+
+    private void masuk() {
+    }
+
+
 }
+
 
