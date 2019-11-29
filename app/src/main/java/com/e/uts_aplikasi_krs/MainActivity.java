@@ -1,61 +1,90 @@
 package com.e.uts_aplikasi_krs;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Service;
+import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.widget.Toast;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
+
+    DataDosenService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        service = RetrofitClient.getRetrofitInstance()
+                .create(DataDosenService.class);
+        getAllDosen();
+        insertDosen();
 
-        // dataDosenService = RetrofitClient.getRetrofitInstance().create(DataDosenService.class); // ambil data
-
-        this.getSupportActionBar().hide();
-
-        Button btnSignIn1 = (Button)findViewById(R.id.btnLogin);
-        btnSignIn1.setOnClickListener(myBtnLoginClick);
     }
 
 
+    private void getAllDosen() {
+        Call<List<DataDosen>> call = service.getDosenAll("1");
+        call.enqueue(new Callback<List<DataDosen>>() {
+            @Override
+            public void onResponse(Call<List<DataDosen>> call, Response<List<DataDosen>> response) {
+                for (DataDosen dataDosen : response.body()) {
+                    System.out.println("Nama : "+dataDosen.getNama());
+                    System.out.println("Nidn : "+dataDosen.getNidn());
 
-
-    private View.OnClickListener myBtnLoginClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            SharedPreferences prefs = MainActivity.this.getSharedPreferences("prefs_file",MODE_PRIVATE);
-
-            String statusLogin = prefs.getString("isLogin",null);
-            SharedPreferences.Editor edit = prefs.edit();
-
-            TextView emailText = findViewById(R.id.editTextid);
-            if (emailText.getText().toString().contains("@si.ukdw.ac.id")){
-                edit.putString("isLogin" , "Mahasiswa");
-                edit.commit();
-                Intent intent = new Intent(MainActivity.this, Dosen.class);
-                startActivity(intent);
-            }else if(emailText.getText().toString().contains("@staff.ukdw.ac.id")){
-                edit.putString("isLogin","Admin");
-                edit.commit();
-                Intent intent = new Intent(MainActivity.this, Admin.class);
-                startActivity(intent);
-            }else {
-                Toast toast = Toast.makeText(getApplicationContext(),"Bukan Email UKDW",Toast.LENGTH_SHORT);
-                toast.setMargin(100,100);
-                toast.show();
+                }
             }
 
-        }
-    };
+            @Override
+            public void onFailure(Call<List<DataDosen>> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "Something wrong.....",
+                        Toast.LENGTH_LONG).show();
+                System.out.println(t.getMessage());
+            }
+        });
+    }
 
+    private void insertDosen() {
+        Call<DefaultResult> call = service.insertDosen("dendy", "001",
+                "jogja", "dendy@gmail.com", "skomeng", "dendy.jpg",
+                "1");
+        call.enqueue(new Callback<DefaultResult>() {
+            @Override
+            public void onResponse(Call<DefaultResult> call, Response<DefaultResult> response) {
+                System.out.println(response.body().getStatus());
+            }
 
+            @Override
+            public void onFailure(Call<DefaultResult> call, Throwable t) {
+                System.out.println("message:" + t.getMessage());
+                Toast.makeText(MainActivity.this, "Something went wrong... please try later",
+                        Toast.LENGTH_SHORT).show();
+            }
 
+            private void updateDosen() {
+                Call<DefaultResult> call = service.updateDosen("777222", "dendy",
+                        "001", "jogja", "dendy@gmail.com",
+                        "dendy.jpg", "001");
+                call.enqueue(new Callback<DefaultResult>() {
+                    @Override
+                    public void onResponse(Call<DefaultResult> call, Response<DefaultResult> response) {
+                        System.out.println(response.body().getStatus());
+                    }
+
+                    @Override
+                    public void onFailure(Call<DefaultResult> call, Throwable t) {
+                        System.out.println("message:" + t.getMessage());
+                        Toast.makeText(MainActivity.this, "sucsessful update",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
 }
